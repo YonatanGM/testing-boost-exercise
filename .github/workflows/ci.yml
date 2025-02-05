@@ -53,4 +53,5 @@ jobs:
       - name: Run tests
         run: |
           cd build
+          chmod +x testsidemade
           ctest --output-on-failure
