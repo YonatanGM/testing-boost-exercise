@@ -1,64 +1,35 @@
-#define BOOST_TEST_MODULE SideMadeTests
-#define BOOST_TEST_DYN_LINK
-#include <Eigen/Dense>
+#define BOOST_TEST_MODULE MatrixIOTest
 #include <boost/test/unit_test.hpp>
-#include "MatrixSolver.hpp"
+#include "matrixIO.hpp"
+#include <fstream>
 
-using namespace Eigen;
-
-struct MatrixSolverFixture {
-  MatrixSolverFixture()
-  {
-    A = MatrixXd(3, 3);
-    A << 1, 2, 3,
-        4, 5, 6,
-        7, 8, 9;
-
-    b = VectorXd(3);
-    b << 3.5, 11, 18.5;
-
-    expectedX = VectorXd(3);
-    expectedX << 2, 0, 0.5;
-  }
-
-  MatrixXd A;
-  VectorXd b;
-  VectorXd expectedX;
-};
-
-BOOST_FIXTURE_TEST_SUITE(MatrixSolverTests, MatrixSolverFixture, *boost::unit_test::tolerance(1e-12))
-
-BOOST_AUTO_TEST_CASE(LU)
-{
-  MatrixSolver solver(MatrixSolver::LU);
-  VectorXd     x(3);
-  solver.solve(A, b, x);
-
-  BOOST_TEST(x(0) == expectedX(0));
-  BOOST_TEST(x(1) == expectedX(1));
-  BOOST_TEST(x(2) == expectedX(2));
+// Helper function to create a test file
+void createTestFile(const std::string &filename, const std::string &content) {
+    std::ofstream file(filename);
+    file << content;
+    file.close();
 }
 
-BOOST_AUTO_TEST_CASE(QR)
-{
-  MatrixSolver solver(MatrixSolver::QR);
-  VectorXd     x(3);
-  solver.solve(A, b, x);
+BOOST_AUTO_TEST_CASE(test_openData_valid) {
+    const std::string testFile = "test_valid.csv";
+    createTestFile(testFile, "1.0,2.0,3.0\n4.0,5.0,6.0\n7.0,8.0,9.0\n");
 
-  BOOST_TEST(x(0) == expectedX(0));
-  BOOST_TEST(x(1) == expectedX(1));
-  BOOST_TEST(x(2) == expectedX(2));
+    MatrixXd matrix = matrixIO::openData(testFile, 3);
+
+    BOOST_CHECK_EQUAL(matrix.rows(), 3);
+    BOOST_CHECK_EQUAL(matrix.cols(), 3);
+    BOOST_CHECK_CLOSE(matrix(0, 0), 1.0, 1e-5);
+    BOOST_CHECK_CLOSE(matrix(1, 1), 5.0, 1e-5);
+    BOOST_CHECK_CLOSE(matrix(2, 2), 9.0, 1e-5);
 }
 
-BOOST_AUTO_TEST_CASE(LU2)
-{
-  MatrixSolver solver(MatrixSolver::LU2);
-  VectorXd     x(3);
-  solver.solve(A, b, x);
-
-  BOOST_TEST(x(0) == expectedX(0));
-  BOOST_TEST(x(1) == expectedX(1));
-  BOOST_TEST(x(2) == expectedX(2));
+BOOST_AUTO_TEST_CASE(test_openData_invalid_file) {
+    BOOST_CHECK_THROW(matrixIO::openData("nonexistent.csv", 3), std::runtime_error);
 }
 
-BOOST_AUTO_TEST_SUITE_END()
+BOOST_AUTO_TEST_CASE(test_openData_invalid_size) {
+    const std::string testFile = "test_invalid_size.csv";
+    createTestFile(testFile, "1.0,2.0\n3.0,4.0\n5.0,6.0\n");
+
+    BOOST_CHECK_THROW(matrixIO::openData(testFile, 3), std::runtime_error);
+}
