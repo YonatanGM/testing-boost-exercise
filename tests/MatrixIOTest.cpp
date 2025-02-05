@@ -3,6 +3,8 @@
 #include <fstream>
 #include "matrixIO.hpp"
 
+BOOST_AUTO_TEST_SUITE(MatrixIOTests)
+
 // Helper function to create a test file
 void createTestFile(const std::string &filename, const std::string &content)
 {
