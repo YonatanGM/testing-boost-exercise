@@ -7,7 +7,7 @@ jobs:
     name: Code Style Check
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Install clang-format
         run: sudo apt-get install -y clang-format
       - name: Check formatting
@@ -18,7 +18,7 @@ jobs:
     name: Build Project
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Install dependencies
         run: sudo apt-get install -y cmake g++ libboost-test-dev libyaml-cpp-dev
       - name: Configure and build
@@ -28,7 +28,7 @@ jobs:
           cmake .. -DCMAKE_BUILD_TYPE=Release
           make
       - name: Upload build artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: build
           path: build
@@ -38,9 +38,9 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Download build artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: build
           path: build
