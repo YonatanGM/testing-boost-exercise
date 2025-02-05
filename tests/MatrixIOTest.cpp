@@ -39,3 +39,5 @@ BOOST_AUTO_TEST_CASE(test_openData_invalid_size)
 
   BOOST_CHECK_THROW(matrixIO::openData(testFile, 3), std::runtime_error);
 }
+
+BOOST_AUTO_TEST_SUITE_END()
