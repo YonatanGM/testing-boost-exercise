@@ -1,7 +1,6 @@
-#define BOOST_TEST_MODULE MatrixIOTest
+#include <Eigen/Dense>
 #include <boost/test/unit_test.hpp>
 #include <fstream>
-#include <Eigen/Dense>
 #include "matrixIO.hpp"
 
 // Helper function to create a test file
@@ -17,7 +16,6 @@ BOOST_AUTO_TEST_CASE(test_openData_valid)
   const std::string testFile = "test_valid.csv";
   createTestFile(testFile, "1.0,2.0,3.0\n4.0,5.0,6.0\n7.0,8.0,9.0\n");
 
- 
   Eigen::MatrixXd matrix = matrixIO::openData(testFile, 3);
 
   BOOST_CHECK_EQUAL(matrix.rows(), 3);
